@@ -1,0 +1,49 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2018-07-01",
+            "name": "stgarmdbatemp",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "stgarmdbatemp"
+            },
+            "sku": {
+                "name": "Standard_LRS"
+            }
+        },
+        {
+            "type": "Microsoft.Sql/servers",
+            "apiVersion": "2015-05-01-preview",
+            "name": "arm-sqlserver",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "arm-sqlserver"
+            },
+            "properties": {
+                "administratorLogin": "AzureAdmin",
+                "administratorLoginPassword": "Admin@123"
+            },
+            "resources": [
+                {
+                    "apiVersion": "2015-05-01-preview",                    
+                    "dependsOn": [
+                        "Microsoft.Sql/servers/arm-sqlserver"
+                    ],
+                    "location": "[resourceGroup().location]",
+                    "name": "AllowAllWindowsAzureIps",
+                    "properties": {
+                        "startIpAddress": "0.0.0.0",
+                        "endIpAddress": "0.0.0.0"
+                    },
+                    "type": "firewallRules"
+                }
+            ]
+        }
+    ],
+    "outputs": {}
+}
